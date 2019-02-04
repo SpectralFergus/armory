@@ -5,11 +5,14 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetTitleMatchMode 2 ; A window's title can contain inputString anywhere inside it to be a match. 
 
+; ==== global vars ====
+practiceWebsite := "JS"
+
 ; KILLSWITCHES
-^Space:: ;
+^Space::
 Reload
 return
-^+Space::
+^!Space::
 ExitApp
 return
 
@@ -23,18 +26,6 @@ gitBashPath = "C:\Program Files\Git\git-bash.exe" --cd="%A_MyDocuments%\AndroidS
 openOnce("MINGW64", gitBashPath)
 return
 
-^j::
-return
-
-; ==== SCITE4AUTOHOTKEY ====
-; Fast-Reload logic specific to SciTE4AutoHotkey
-#IfWinActive SciTE4AutoHotkey
-^s::
-Send, ^s
-sleep, 250
-Send, {F5}
-Reload
-return
 ; ____ SCITE4AUTOHOTKEY ____
 
 ; ==== UTILITY FUNCTIONS ====
@@ -53,4 +44,32 @@ openOnce(title, program) {
 	return
 }
 
+switchTo(windowTitle) {
+	if(WinExist(windowTitle)) {
+		WinActivate, %windowTitle%
+		WinWaitActive, %windowTitle%
+	}
+	return
+}
+
+; ============ WINDOW-SPECIFIC =====================
+; __________________________________________________
+; ==== SCITE4AUTOHOTKEY ====
+; Fast-Reload logic specific to SciTE4AutoHotkey
+#IfWinActive SciTE4AutoHotkey
+^s::
+Send, ^s
+sleep, 250
+Send, {F5}
+Reload
+return
+
 ; ____ UTILITY FUNCTIONS ____
+#IfWinActive Atom
+^s::
+Send ^s
+switchTo(practiceWebsite)
+Send, {F5}
+Sleep, 1
+switchTo("Atom")
+return
